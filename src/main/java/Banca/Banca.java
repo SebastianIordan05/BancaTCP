@@ -53,8 +53,16 @@ public class Banca {
         users.put(username, user);
     }
     
+    public static void removeUser(String username) {
+        users.remove(username);
+    }
+    
     public static void addConto(String username, ContoCorrente conto) {
         conti.put(username, conto);
+    }
+    
+    public static void removeConto(String username) {
+        conti.remove(username);
     }
 
     private static <T> Map<String, T> load(final File f, Class<T> v) {

@@ -78,6 +78,11 @@ public class ClientHandler implements Runnable {
             String username = inputFromClient.readLine();
             outputToClient.println("Inserisci la password:");
             String password = inputFromClient.readLine();
+            
+            if (username.equals("admin") || password.equals("admin")) {
+                outputToClient.println("Non puoi creare un utente con queste credenziali");
+                handleRegister();
+            }
 
             u = new Utente(username, password);
             cc = new ContoCorrente(0, username);
@@ -97,12 +102,15 @@ public class ClientHandler implements Runnable {
             String username = inputFromClient.readLine();
             outputToClient.println("Inserisci la password:");
             String password = inputFromClient.readLine();
+            
+            if (username.equals("admin") && password.equals("admin"))
+                handleAdminOptions();
 
             u = Banca.getUser(username);
             cc = Banca.getConto(username);
 
             if (u == null) {
-                outputToClient.println("Nessun utente con quel nome!");
+                outputToClient.println("Nessun utente trovato con quel username!");
                 return;
             }
 
@@ -120,7 +128,72 @@ public class ClientHandler implements Runnable {
             
             handleOptions();
         } catch (IOException ex) {
-            System.err.println("Error handling login request: " + ex.getMessage());
+        }
+    }
+    
+    private void handleAdminOptions() {
+        try {
+            while (true) {
+                outputToClient.println("""
+                                               Cosa vuoi fare? (back to return to login/register & bye to exit)
+                                               - Visualizza uteanti salvati nella banca (comandi: vsu || visualizzautenti)
+                                               - VIsualizza conti e relativi saldi salvati nella banca (comandi: vsc || visualizzaconti)
+                                               - Elimina utente (comandi: elmu || eliminautente)
+                                               - Elimina conto (comandi: elmc || eliminaconto)""");
+                final String option = inputFromClient.readLine();
+
+                switch (option) {
+                    case "vsu", "visualizzautenti" -> {
+                        outputToClient.println("Utenti:");
+                        System.out.println("Utenti: ");
+                        for (final Utente user : Banca.getUsers().values()) {
+                            outputToClient.println(user);
+                            System.out.println(user);
+                        }
+                    }
+                    case "vsc", "visualizzaconti" -> {
+                        outputToClient.println("Conti:");
+                        System.out.println("Conti: ");
+                        for (final ContoCorrente conto : Banca.getConti().values()) {
+                            outputToClient.println(conto);
+                            System.out.println(conto);
+                        }
+                    }
+                    case "elmu", "eliminautente" -> {
+                        outputToClient.println("Utenti:");
+                        for (final Utente user : Banca.getUsers().values()) {
+                            outputToClient.println(user);
+                        }
+                        outputToClient.println("Quale utente vuoi eliminare? (scrivi il suo username)");
+                        String username = inputFromClient.readLine();
+                        
+                        Banca.removeUser(username);
+                        Banca.removeConto(username);
+                        outputToClient.println("Utente (e conto associato) rimosso dalla banca con successo.");
+                    }
+                    case "elmc", "eliminaconto" -> {
+                        outputToClient.println("Conti:");
+                        for (final ContoCorrente conto : Banca.getConti().values()) {
+                            outputToClient.println(conto);
+                        }
+                        outputToClient.println("Quale conto vuoi eliminare? (scrivi 'username dell'utente a cui appartiene)");
+                        String username = inputFromClient.readLine();
+                        
+                        Banca.removeConto(username);
+                        outputToClient.println("Conto rimosso dalla banca con successo.");
+                    }
+                    case "bye" -> {
+                        handleCloseSave();
+                    }
+                    case "back" -> {
+                        run();
+                    }
+                    default -> {
+                        continue;
+                    }
+                }
+            }
+        } catch (IOException ex) {
         }
     }
 

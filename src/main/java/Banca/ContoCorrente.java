@@ -18,8 +18,8 @@ public class ContoCorrente implements Serializable {
     private final String iban;
 
     public ContoCorrente(double conto, String nomeProprietario) {
-        this.conto = conto;
-        this.nomeProprietario = nomeProprietario;
+        this.conto = Objects.requireNonNull(conto);
+        this.nomeProprietario = Objects.requireNonNull(nomeProprietario);
         iban = generateIBAN();
     }
 

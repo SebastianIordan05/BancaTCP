@@ -16,8 +16,8 @@ public class Utente implements Serializable {
     private final String password;
 
     public Utente(String username, String password) {
-        this.username = username;
-        this.password = password;
+        this.username = Objects.requireNonNull(username);
+        this.password = Objects.requireNonNull(password);
     }
 
     public String getUsername() {
