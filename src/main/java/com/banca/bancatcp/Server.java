@@ -60,14 +60,15 @@ public class Server {
                             
                             u = new Utente(username, password);
                             cc = new ContoCorrente(0, username);
+                            System.out.println("New utente creato con successo.");
+                            System.out.println(u.toString());
+                            System.out.println("New conto creato con successo.");
+                            System.out.println(cc.toString());
                             
                             Banca.addUser(u.getUsername(), u);
                             Banca.addConto(u.getUsername(), cc);
                             
-                            System.out.println(u.toString());
-                            System.out.println(cc.toString());
-                            
-                            outputToClient.println(u.toString() + ", " + cc.toString());
+                            outputToClient.println("Utente creato con successo, all'utente è stato assegnato un nuovo conto.");
                         }
                         case "login" -> {
                             outputToClient.println("Inserisci il nome utente:");
@@ -87,12 +88,11 @@ public class Server {
                             System.out.println(cc.toString());
                             
                             if (username.equals(u.getUsername()) && password.equals(u.getPassword())) {
-                                outputToClient.println("Accesso consentito.");
+                                outputToClient.println("Login effettuato con successo.");
                             }
                         }
                         case "bye" -> {
                             closeSave();
-                            break mainLoop;
                         }
                         default -> {
                             continue;
@@ -101,33 +101,50 @@ public class Server {
 
                     thirdLoop:
                     while (true) {
-
-                        outputToClient.println("Cosa vuoi fare? (back to return to login/register & bye to exit)");
-                        outputToClient.println("- Prelievo (prv || prelievo)");
-                        outputToClient.println("- Versamento (vrs || versamento)");
-                        outputToClient.println("- Visualizza conto corrente (vs || visualizza || conto)");
+                        outputToClient.println("""
+                                               Cosa vuoi fare? (back to return to login/register & bye to exit) 
+                                               - Prelievo (comandi: prv || prelievo)
+                                               - Versamento (comandi: vrs || versamento)
+                                               - Visualizza saldo (comandi: sd || saldo)
+                                               - Visualizza informazioni conto (comandi: infoc || infoconto || conto)
+                                               - Visualizza informazioni utente (comandi: infou || infoutente || utente)""");
                         final String option = inputFromClient.readLine();
 
                         switch (option) {
-                            case "vs", "visualizza", "conto" ->
-                                outputToClient.println("Conto: " + cc.getConto());
+                            case "sd", "saldo" -> {
+                                outputToClient.println("Saldo: " + cc.getConto());
+                                System.out.println("Saldo: " + cc.getConto());
+                            }
                             case "prv", "prelievo" -> {
                                 outputToClient.println("Importo: ");
                                 final String input = inputFromClient.readLine();
                                 double importo = Double.parseDouble(input);
                                 final double finalImporto = cc.getConto() - importo;
+                                
+                                System.out.println("Old saldo: " + cc.getConto());
                                 cc.setConto(finalImporto);
+                                System.out.println("New saldo: " + cc.getConto());
                             }
                             case "vrs", "versamento" -> {
                                 outputToClient.println("Importo: ");
                                 final String input = inputFromClient.readLine();
                                 double importo = Double.parseDouble(input);
                                 final double finalImporto = cc.getConto() + importo;
+                                
+                                System.out.println("Old saldo: " + cc.getConto());
                                 cc.setConto(finalImporto);
+                                System.out.println("New Saldo: " + cc.getConto());
+                            }
+                            case "infoc", "infoconto", "conto" -> {
+                                outputToClient.println(cc.toString());
+                                System.out.println(cc.toString());
+                            }
+                            case "infou", "infoutente", "utente" -> {
+                                outputToClient.println(u.toString());
+                                System.out.println(u.toString());
                             }
                             case "bye" -> {
                                 closeSave();
-                                break mainLoop;
                             }
                             case "back" -> {
                                 continue secondLoop;
