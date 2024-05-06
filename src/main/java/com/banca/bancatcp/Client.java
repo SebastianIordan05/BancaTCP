@@ -35,7 +35,12 @@ public class Client {
                 try {
                     String output;
                     while ((output = userInput.readLine()) != null) {
-                        outputToServer.println(output);
+                        if (output.equals("bye")) {
+                            outputToServer.println(output);
+                            System.exit(0);
+                        } else {
+                            outputToServer.println(output);
+                        }
                     }
                 } catch (IOException ex) {
                 }
