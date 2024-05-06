@@ -21,6 +21,7 @@ public class Banca {
 
     private final static String FILE_PATH = "./users.dat";
     private final static String FILE_PATH2 = "./conti.dat";
+    
     private final static Map<String, Utente> users = load(new File(FILE_PATH), Utente.class);
     private final static Map<String, ContoCorrente> conti = load(new File(FILE_PATH2), ContoCorrente.class);
 
