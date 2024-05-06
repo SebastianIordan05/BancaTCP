@@ -1,0 +1,5 @@
+Banca\Banca.class
+Banca\ContoCorrente.class
+Banca\Utente.class
+com\banca\bancatcp\Server.class
+com\banca\bancatcp\Client.class
